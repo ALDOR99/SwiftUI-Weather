@@ -8,13 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State private var isNight = false
+    
     var body: some View {
         ZStack{
-            BackgroundView(topColor: .blue, 
-                           bottomColor: Color("lightBlue"))
+            BackgroundView(isNight: isNight)
             VStack{
                 
-                MainWheatherStatusView(imageName: "cloud.sun.fill", temperature: 76)
+                CityTextView(cityName: "Cupertino,CA")
+                MainWheatherStatusView(imageName: isNight ? "moon.stars.fill" : "cloud.sun.fill", temperature: 76)
 
                     HStack(spacing:20){
                         WheatherDayView(dayOfWeek: "TUE",
@@ -36,10 +39,10 @@ struct ContentView: View {
                 Spacer()
             
                 Button {
-                    print("tapped")
+                    isNight.toggle()
                 } label:{
-                    WeatherButton(title: "Change Day Time", textColor: .blue, 
-                        backgroundColor: .white)
+                    WeatherButton(title: "Change Day Time", textColor: .white,
+                        backgroundColor: .mint)
                 }
                    Spacer()
             }
@@ -65,9 +68,10 @@ struct WheatherDayView: View {
                 .foregroundColor(.white)
             
             Image(systemName: imageName)
-                .renderingMode(.original)
+                .symbolRenderingMode(.multicolor)
                 .resizable()
-                .aspectRatio(contentMode: .fit)
+                //.foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
+                //.aspectRatio(contentMode: .fit)
                 .frame(width:40,height:40)
             
             Text("\(temperature)")
@@ -79,15 +83,15 @@ struct WheatherDayView: View {
 }
 
 struct BackgroundView: View {
-    
-    var topColor: Color
-    var bottomColor : Color
-    
+   var isNight:Bool
     var body: some View {
-        LinearGradient(gradient: Gradient(colors: [topColor,bottomColor]),
-                       startPoint: .topLeading,
-                       endPoint: .bottomTrailing)
-        .edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
+        //        LinearGradient(gradient: Gradient(colors: [isNight ? .black : .blue, isNight ? .gray : Color("lightBlue")]),
+        //                       startPoint: .topLeading,
+        //                       endPoint: .bottomTrailing)
+        //        .ignoresSafeArea()
+        ContainerRelativeShape()
+            .fill(isNight ? Color.black.gradient : Color.blue.gradient)
+            .ignoresSafeArea()
     }
 }
 
@@ -108,7 +112,6 @@ struct MainWheatherStatusView:View {
     
     var body: some View {
         VStack{
-            CityTextView(cityName: "Cupertino,CA")
             
             VStack(spacing:10){
                 Image(systemName: imageName)
